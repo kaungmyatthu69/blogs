@@ -28,8 +28,8 @@ Route::get('/',[BlogController::class,'index']);
 
 
 
-
 Route::get('/blogs/{blog:slug}',[BlogController::class,'show']);
+
 // ->where('blog','[A-z\d\-_]+')
 
 
@@ -49,12 +49,20 @@ Route::post('/blogs/{blog:slug}/commments',[CommentController::class,'store']);
 Route::post('/blogs/{blog:slug}/subscription',[BlogController::class,'subscription']);
 
 //Admin Routes
-Route::group(['prefix'=>'/admin/blogs','middleware'=>'can:admin'],function(){
-        Route::get('/create',[AdminBlogController::class,'create']);
-        Route::post('/create',[AdminBlogController::class,'store']);
-        Route::get('',[AdminBlogController::class,'index']);
-        Route::delete('/{blog:slug}/delete',[AdminBlogController::class,'destory']);
-        Route::get('/{blog:slug}/edit',[AdminBlogController::class,'edit']);
-        Route::patch('/{blog:slug}/update',[AdminBlogController::class,'update']);
+Route::group(['prefix'=>'/admin/blogs','middleware'=>'can:admin','controller'=> AdminBlogController::class],function(){
+        Route::get('/create','create');
+        Route::post('/create','store');
+        Route::get('','index');
+        Route::delete('/{blog:slug}/delete','destory');
+        Route::get('/{blog:slug}/edit','edit');
+        Route::patch('/{blog:slug}/update','update');
 });
 
+// Route::prefix('/admin/blogs')->middleware('can:admin')->controller(AdminBlogController::class)->group(function(){
+//             Route::get('/create','create');
+//             Route::post('/create','store');
+//             Route::get('','index');
+//             Route::delete('/{blog:slug}/delete','destory');
+//             Route::get('/{blog:slug}/edit','edit');
+//             Route::patch('/{blog:slug}/update','update');
+// });
