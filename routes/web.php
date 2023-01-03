@@ -24,39 +24,39 @@ use Illuminate\Support\Facades\Log;
 |
 */
 
-Route::get('/',[BlogController::class,'index']);
+
+//Blogs
+
+Route::controller(BlogController::class)->group(function(){
+    Route::get('/','index');
+    Route::get('/blogs/{blog:slug}','show');
+    Route::post('/blogs/{blog:slug}/subscription','subscription');
+});
 
 
+//Auth
 
-Route::get('/blogs/{blog:slug}',[BlogController::class,'show']);
+Route::middleware('guest')->controller(AuthController::class)->group(function(){
+    Route::prefix('/register')->group(function(){
+        Route::get('','create');
+        Route::post('','store');
+    });
+    Route::prefix('/login')->group(function(){
+        Route::get('','login');
+        Route::post('','post_login');
+    });
+});
 
-// ->where('blog','[A-z\d\-_]+')
 
-
-
-
-
-Route::get('/register',[AuthController::class,'create'])->middleware('guest');
-Route::post('/register',[AuthController::class,'store'])->middleware('guest');
+//comment & logout
 
 Route::post('/logout',[AuthController::class,'logout'])->middleware('auth');
-
-Route::get('/login',[AuthController::class,'login'])->middleware('guest');
-Route::post('/login',[AuthController::class,'post_login'])->middleware('guest');
-
 Route::post('/blogs/{blog:slug}/commments',[CommentController::class,'store']);
 
-Route::post('/blogs/{blog:slug}/subscription',[BlogController::class,'subscription']);
+
+
 
 //Admin Routes
-// Route::group(['prefix'=>'/admin/blogs','middleware'=>'can:admin','controller'=> AdminBlogController::class],function(){
-//         Route::get('/create','create');
-//         Route::post('/create','store');
-//         Route::get('','index');
-//         Route::delete('/{blog:slug}/delete','destory');
-//         Route::get('/{blog:slug}/edit','edit');
-//         Route::patch('/{blog:slug}/update','update');
-// });
 
 Route::prefix('/admin/blogs')->middleware('can:admin')->controller(AdminBlogController::class)->group(function(){
             Route::get('/create','create');
